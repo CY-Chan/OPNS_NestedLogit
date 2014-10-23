@@ -136,21 +136,18 @@ trueProb <- left_join(
 # The hypothesis we are testing is that our estimates are equal to the true, theoretical probs.
 # We expect to not reject the hypothesis in the first method, and to reject the hypothesis
 # in the second case. 
-# Our expectations regarding the first method prove to be true. However, we also do not reject
-# the null for the estimates from the second method either. Further note that this is only for 
-# the estimates that we are were able to test. Choices A1 and B1 are never chosen in the second
-# method and could not be tested due to singularity issues. 
+# Our expectations are confirmed.
 #################################################################################################
-wald <- function (theta, sigma, H0,rem,n = N){
-  W<- n * t(theta[-rem] - H0[-rem])%*%
-    (sigma[-rem,-rem]) %*%
-    (theta[-rem] - H0[-rem])
+wald <- function (theta, sigma, H0){
+  W<- t(theta - H0)%*%
+    ginv(sigma) %*%
+    (theta - H0)
   return(W)
 }
 
-W1 <- wald(Prob1$prob, sigma1, Truth$prob,rem=1,n=N)
-W1 > qchisq(0.975,8) # Fail to reject the null hypothesis of equal probabilities
+W1 <- wald(Prob1$prob, sigma1, trueProb$prob)
+1 - pchisq(W1,9) # Fail to reject the null hypothesis of equal probabilities
 
-W2 <- wald(Prob2$prob,sigma2,Truth$prob,rem=c(1,2,4),n=N)
-W2 > qchisq(0.975,6) # Fail to reject the null hypothesis of equal probabilities
+W2 <- wald(Prob2$prob,sigma2,trueProb$prob)
+1 - pchisq(W2,9) # Reject the null hypothesis of equal probabilities
 
