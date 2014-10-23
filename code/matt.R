@@ -77,8 +77,10 @@ b.cov <- function(data, num, size){
   return(covProb)
 } 
 
-sigma1 <- b.cov(item_choice1,100,100)
-sigma2 <- b.cov(item_choice2,100,100)
+sigma1 <- b.cov(item_choice1,100,100) %>%
+      as.matrix
+sigma2 <- b.cov(item_choice2,100,100) %>%
+      as.matrix
 
 
 
